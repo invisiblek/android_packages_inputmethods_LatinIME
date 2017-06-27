@@ -19,6 +19,7 @@ package com.android.inputmethod.latin.utils;
 import android.util.Log;
 
 import com.android.inputmethod.latin.define.JniLibName;
+import com.android.inputmethod.latin.settings.SettingsValues;
 
 public final class JniUtils {
     private static final String TAG = JniUtils.class.getSimpleName();
@@ -26,11 +27,15 @@ public final class JniUtils {
     public static boolean mHaveGestureLib = false;
     static {
         try {
-            System.loadLibrary(JniLibName.JNI_LIB_NAME2);
-            mHaveGestureLib = true;
+            if (!SettingsValues.isGestureLibForceDisabled()) {
+                System.loadLibrary(JniLibName.JNI_LIB_NAME2);
+                mHaveGestureLib = true;
+            }
         } catch (UnsatisfiedLinkError ue) {
             try {
-                System.loadLibrary(JniLibName.JNI_LIB_NAME);
+                if (!SettingsValues.isGestureLibForceDisabled()) {
+                    System.loadLibrary(JniLibName.JNI_LIB_NAME);
+                }
             } catch (UnsatisfiedLinkError ule) {
                 Log.e(TAG, "Could not load native library " + JniLibName.JNI_LIB_NAME, ule);
             }
